@@ -1,11 +1,12 @@
 package com.loopeer.test.itemtouchhelperextension;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.loopeer.itemtouchhelperextension.ItemTouchHelperExtension;
 
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private List<TestModel> createTestDatas() {
         List<TestModel> result = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            TestModel testModel= new TestModel(i,":Item Swipe Action Button Container Width");
+            TestModel testModel = new TestModel(i, ":Item Swipe Action Button Container Width");
             if (i == 1) {
                 testModel = new TestModel(i, "Item Swipe with Action container width and no spring");
             }

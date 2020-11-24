@@ -1,9 +1,16 @@
 # itemtouchhelper-extension
-This library add something for swipe item settling, recover base on the [Itemtouchhelper](https://developer.android.com/reference/android/support/v7/widget/helper/ItemTouchHelper.html).
+
+_A fork of [itemtouchhelper-extension](https://github.com/loopeer/itemtouchhelper-extension)_
+
+[![](https://jitpack.io/v/pecet86/itemtouchhelper-extension.svg)](https://jitpack.io/#pecet86/itemtouchhelper-extension)
+![License](https://img.shields.io/github/license/pecet86/historian.svg)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](http://makeapullrequest.com)
+
+This library add something for swipe item settling, recover base on the [Itemtouchhelper](https://developer.android.com/reference/androidx/recyclerview/widget/ItemTouchHelper).
 
 This used in the repo [code-reader](https://github.com/loopeer/code-reader)
 
-[Download Sample](https://github.com/loopeer/itemtouchhelper-extension/releases/tag/1.0.0)
+[Download Sample](https://github.com/pecet86/itemtouchhelper-extension/releases/tag/2.0.0)
 
 Screenshot
 ====
@@ -20,11 +27,17 @@ Screenshot
 
 Installation
 ====
-```groovy
+```gradle
+repositories {
+    maven { url "https://jitpack.io" }
+}
 dependencies {
-    compile 'com.loopeer.library:itemtouchhelperextension:1.0.6'
+  def itemtouchhelper_version = '<version>'
+  implementation "com.github.pecet86:itemtouchhelper-extension:itemtouchhelper_version"
 }
 ```
+
+
 Usages
 ====
 ```java
@@ -87,6 +100,7 @@ License
 ====
 <pre>
 Copyright 2016 Loopeer
+Copyright 2020 Paweł Cal (pecet86)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

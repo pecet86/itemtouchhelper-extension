@@ -1,1 +1,2 @@
-include ':app', ':itemtouchhelperextension'
+include ':itemtouchhelperextension'
+include ':app'

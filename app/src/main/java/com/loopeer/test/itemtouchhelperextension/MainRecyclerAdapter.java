@@ -1,8 +1,7 @@
 package com.loopeer.test.itemtouchhelperextension;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,20 +9,24 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+
 import com.loopeer.itemtouchhelperextension.Extension;
 import com.loopeer.itemtouchhelperextension.ItemTouchHelperExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MainRecyclerAdapter extends Adapter<ViewHolder> {
 
     public static final int ITEM_TYPE_RECYCLER_WIDTH = 1000;
     public static final int ITEM_TYPE_ACTION_WIDTH = 1001;
     public static final int ITEM_TYPE_ACTION_WIDTH_NO_SPRING = 1002;
     public static final int ITEM_TYPE_NO_SWIPE = 1003;
-    private List<TestModel> mDatas;
-    private Context mContext;
+    private final List<TestModel> mDatas;
+    private final Context mContext;
     private ItemTouchHelperExtension mItemTouchHelperExtension;
 
     public MainRecyclerAdapter(Context context) {
@@ -49,11 +52,16 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return LayoutInflater.from(mContext);
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = getLayoutInflater().inflate(R.layout.list_item_main, parent, false);
-        if (viewType == ITEM_TYPE_ACTION_WIDTH) return new ItemSwipeWithActionWidthViewHolder(view);
-        if (viewType == ITEM_TYPE_NO_SWIPE) return new ItemNoSwipeViewHolder(view);
+        if (viewType == ITEM_TYPE_ACTION_WIDTH) {
+            return new ItemSwipeWithActionWidthViewHolder(view);
+        }
+        if (viewType == ITEM_TYPE_NO_SWIPE) {
+            return new ItemNoSwipeViewHolder(view);
+        }
         if (viewType == ITEM_TYPE_RECYCLER_WIDTH) {
             view = getLayoutInflater().inflate(R.layout.list_item_with_single_delete, parent, false);
             return new ItemViewHolderWithRecyclerWidth(view);
@@ -62,46 +70,38 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ItemBaseViewHolder baseViewHolder = (ItemBaseViewHolder) holder;
         baseViewHolder.bind(mDatas.get(position));
-        baseViewHolder.mViewContent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(mContext, "Item Content click: #" + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
-            }
+        baseViewHolder.mViewContent.setOnClickListener(view -> {
+            Toast.makeText(mContext, "Item Content click: #" + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
         });
+
         if (holder instanceof ItemViewHolderWithRecyclerWidth) {
             ItemViewHolderWithRecyclerWidth viewHolder = (ItemViewHolderWithRecyclerWidth) holder;
-            viewHolder.mActionViewDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    doDelete(holder.getAdapterPosition());
-                }
+            viewHolder.mActionViewDelete.setOnClickListener(view -> {
+                Toast.makeText(mContext, "Delete Click" + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
+                doDelete(holder.getAdapterPosition());
+            });
+            viewHolder.mActionViewUndo.setOnClickListener(view -> {
+                Toast.makeText(mContext, "Undo Click" + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
+                doUndo(viewHolder);
             });
         } else if (holder instanceof ItemSwipeWithActionWidthViewHolder) {
             ItemSwipeWithActionWidthViewHolder viewHolder = (ItemSwipeWithActionWidthViewHolder) holder;
-            viewHolder.mActionViewRefresh.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Toast.makeText(mContext, "Refresh Click" + holder.getAdapterPosition()
-                                    , Toast.LENGTH_SHORT).show();
-                            mItemTouchHelperExtension.closeOpened();
-                        }
-                    }
-
-            );
-            viewHolder.mActionViewDelete.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            doDelete(holder.getAdapterPosition());
-                        }
-                    }
-
-            );
+            viewHolder.mActionViewRefresh.setOnClickListener(view -> {
+                Toast.makeText(mContext, "Refresh Click" + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
+                mItemTouchHelperExtension.closeOpened();
+            });
+            viewHolder.mActionViewDelete.setOnClickListener(view -> {
+                Toast.makeText(mContext, "Delete Click" + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
+                doDelete(holder.getAdapterPosition());
+            });
         }
+    }
+
+    private void doUndo(ItemViewHolderWithRecyclerWidth viewHolder) {
+        viewHolder.mViewContent.post(() -> viewHolder.mViewContent.animate().translationX(0));
     }
 
     private void doDelete(int adapterPosition) {
@@ -134,7 +134,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mDatas.size();
     }
 
-    class ItemBaseViewHolder extends RecyclerView.ViewHolder {
+    class ItemBaseViewHolder extends ViewHolder {
         TextView mTextTitle;
         TextView mTextIndex;
         View mViewContent;
@@ -142,35 +142,34 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         public ItemBaseViewHolder(View itemView) {
             super(itemView);
-            mTextTitle = (TextView) itemView.findViewById(R.id.text_list_main_title);
-            mTextIndex = (TextView) itemView.findViewById(R.id.text_list_main_index);
+            mTextTitle = itemView.findViewById(R.id.text_list_main_title);
+            mTextIndex = itemView.findViewById(R.id.text_list_main_index);
             mViewContent = itemView.findViewById(R.id.view_list_main_content);
             mActionContainer = itemView.findViewById(R.id.view_list_repo_action_container);
         }
 
+        @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
         public void bind(TestModel testModel) {
             mTextTitle.setText(testModel.title);
             mTextIndex.setText("#" + testModel.position);
-            itemView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
-                        mItemTouchHelperExtension.startDrag(ItemBaseViewHolder.this);
-                    }
-                    return true;
+            itemView.setOnTouchListener((v, event) -> {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    mItemTouchHelperExtension.startDrag(ItemBaseViewHolder.this);
                 }
+                return true;
             });
         }
     }
 
-
     class ItemViewHolderWithRecyclerWidth extends ItemBaseViewHolder {
 
         View mActionViewDelete;
+        View mActionViewUndo;
 
         public ItemViewHolderWithRecyclerWidth(View itemView) {
             super(itemView);
             mActionViewDelete = itemView.findViewById(R.id.view_list_repo_action_delete);
+            mActionViewUndo = itemView.findViewById(R.id.view_list_repo_action_undo);
         }
 
     }

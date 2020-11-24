@@ -20,11 +20,14 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.State;
 
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     private static final int DEFAULT_DIVIDER_HEIGHT = 1;
@@ -55,9 +58,13 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         mContext = context;
 
         init();
-        if (padding != -1) this.padding = padding;
+        if (padding != -1) {
+            this.padding = padding;
+        }
         updatePaddint();
-        if (dividerHeight != -1) this.dividerHeight = dividerHeight;
+        if (dividerHeight != -1) {
+            this.dividerHeight = dividerHeight;
+        }
     }
 
     public DividerItemDecoration(Context context, int orientation, int startpadding, int endpadding, int dividerHeight) {
@@ -65,9 +72,15 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         mContext = context;
 
         init();
-        if (startpadding != -1) this.startpadding = startpadding;
-        if (endpadding != -1) this.endpadding = endpadding;
-        if (dividerHeight != -1) this.dividerHeight = dividerHeight;
+        if (startpadding != -1) {
+            this.startpadding = startpadding;
+        }
+        if (endpadding != -1) {
+            this.endpadding = endpadding;
+        }
+        if (dividerHeight != -1) {
+            this.dividerHeight = dividerHeight;
+        }
     }
 
     private void updatePaddint() {
@@ -97,7 +110,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+    public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull State state) {
         super.onDraw(c, parent, state);
         if (mOrientation == VERTICAL_LIST) {
             drawVertical(c, parent);
@@ -107,16 +120,16 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     public void drawVertical(Canvas c, RecyclerView parent) {
-        final int left = parent.getPaddingLeft();
-        final int right = parent.getWidth() - parent.getPaddingRight();
+        int left = parent.getPaddingLeft();
+        int right = parent.getWidth() - parent.getPaddingRight();
 
-        final int childCount = parent.getChildCount();
+        int childCount = parent.getChildCount();
         for (int i = 0; i < childCount - 1; i++) {
-            final View child = parent.getChildAt(i);
-            final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-            final int top = child.getBottom() + params.bottomMargin +
+            View child = parent.getChildAt(i);
+            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
+            int top = child.getBottom() + params.bottomMargin +
                     Math.round(ViewCompat.getTranslationY(child));
-            final int bottom = top + dividerHeight;
+            int bottom = top + dividerHeight;
 
             c.drawRect(left, top, left + startpadding, bottom, mPaddingPaint);
             c.drawRect(right - endpadding, top, right, bottom, mPaddingPaint);
@@ -125,16 +138,16 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     public void drawHorizontal(Canvas c, RecyclerView parent) {
-        final int top = parent.getPaddingTop();
-        final int bottom = parent.getHeight() - parent.getPaddingBottom();
+        int top = parent.getPaddingTop();
+        int bottom = parent.getHeight() - parent.getPaddingBottom();
 
-        final int childCount = parent.getChildCount();
+        int childCount = parent.getChildCount();
         for (int i = 0; i < childCount - 1; i++) {
-            final View child = parent.getChildAt(i);
-            final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-            final int left = child.getRight() + params.rightMargin +
+            View child = parent.getChildAt(i);
+            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
+            int left = child.getRight() + params.rightMargin +
                     Math.round(ViewCompat.getTranslationX(child));
-            final int right = left + dividerHeight;
+            int right = left + dividerHeight;
             c.drawRect(left, top, right, top + startpadding, mPaddingPaint);
             c.drawRect(left, bottom - endpadding, right, bottom, mPaddingPaint);
             c.drawRect(left, top + startpadding, right, bottom - endpadding, mDividerPaint);
@@ -142,7 +155,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull State state) {
         super.getItemOffsets(outRect, view, parent, state);
         if (mOrientation == VERTICAL_LIST) {
             if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {

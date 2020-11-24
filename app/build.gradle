@@ -20,11 +20,16 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':itemtouchhelperextension')
-    implementation libs.appcompatV7
-    implementation libs.design
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':itemtouchhelperextension')
+    implementation "androidx.appcompat:appcompat:${libs.appcompat}"
+    implementation "com.google.android.material:material:${libs.design}"
 }
